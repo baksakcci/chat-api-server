@@ -19,11 +19,18 @@ import org.example.domain.UserRepository;
     decoders = MessageDecoder.class,
     encoders = MessageEncoder.class)
 public class ChatEndpoint {
-    private final ChattingSessionRepository chattingSessionRepository = new ChattingSessionRepository();
-    private final UserRepository userRepository = new UserRepository();
+    private ChattingSessionRepository chattingSessionRepository;
+    private UserRepository userRepository = new UserRepository();
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException {
+        if (chattingSessionRepository == null) {
+            chattingSessionRepository = new ChattingSessionRepository();
+        }
+        if (userRepository == null) {
+            userRepository = new UserRepository();
+        }
+
         chattingSessionRepository.add(session);
 
         userRepository.register(session.getId(), username);
