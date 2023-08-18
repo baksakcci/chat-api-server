@@ -1,5 +1,8 @@
 package com.example.springstompprogramming.room.dto;
 
+import lombok.Getter;
+
+@Getter
 public class RoomResponseDto {
     private String roomId;
     private String name;

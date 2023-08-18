@@ -17,7 +17,7 @@ public class ChatController {
         if (MessageType.ENTER.equals(message.getMessageType())) {
             message.setMessage(message.getSender() + "님이 입장하셨습니다.");
         }
-        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+        messagingTemplate.convertAndSend("/sub/chat/rooms/" + message.getRoomId(), message);
     }
 
 }
