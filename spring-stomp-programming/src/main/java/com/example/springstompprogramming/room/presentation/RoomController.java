@@ -16,18 +16,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoomController {
     private final RoomService roomService;
 
+    // 방 생성
     @PostMapping("/rooms")
     public ResponseEntity<RoomResponseDto> createRoom(@RequestParam String name) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(roomService.createRoom(name));
     }
+
+    // 모든 방 리스트 출력
     @GetMapping("/rooms")
     public ResponseEntity<?> findAll() {
         return ResponseEntity.ok(roomService.findAll());
     }
+
+    // 채팅방 정보 출력 (1개)
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<RoomResponseDto> roomInfo(@PathVariable String roomId) {
         return ResponseEntity.ok(roomService.findRoom(roomId));
     }
+
+    // 방문한 적 있는 채팅방 리스트 출력
 
 }

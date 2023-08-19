@@ -1,5 +1,6 @@
 package com.example.springstompprogramming.chat.dto;
 
+import com.example.springstompprogramming.chat.domain.entity.MessageType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

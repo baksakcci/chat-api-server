@@ -1,12 +1,16 @@
-package com.example.springstompprogramming.chatController;
+package com.example.springstompprogramming.chat;
 
 import com.example.springstompprogramming.chat.dto.MessageDto;
-import com.example.springstompprogramming.chat.dto.MessageType;
+import com.example.springstompprogramming.chat.domain.entity.MessageType;
 import com.example.springstompprogramming.room.domain.entity.Room;
+import com.example.springstompprogramming.room.domain.repository.RoomRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -17,6 +21,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -25,6 +32,8 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -32,17 +41,33 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class ChattingTest {
+@AutoConfigureDataJpa
+@AutoConfigureMockMvc
+//@ActiveProfiles("test")
+public class ChatIntegrationTest {
     @LocalServerPort
     private int port;
-
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
     StompSession session;
+    @Autowired
+    RoomRepository roomRepository;
 
     @BeforeEach
-    void setUp() throws ExecutionException, InterruptedException, TimeoutException {
+    void setUp()
+        throws ExecutionException, InterruptedException, TimeoutException, JsonProcessingException {
+        /*
+         store room to DB
+         */
+        Room room = Room.create("testRoom1");
+        roomRepository.save(room);
+        /*
+         connection client using stomp
+         */
         // init
         RestAssured.port = port;
-
         // setting
         WebSocketStompClient webSocketStompClient = webSocketStompClient();
         webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
@@ -60,7 +85,7 @@ public class ChattingTest {
     void enterRoomAndBroadCastMessage() throws InterruptedException {
         // init - given
         BlockingQueue<MessageDto> queue = new LinkedBlockingQueue<>();
-        Room room = Room.create("testRoom1");
+        Room room = roomRepository.findByName("testRoom1").orElseThrow(NoSuchElementException::new);
         MessageDto testMessage = MessageDto.toDto(MessageType.ENTER, room.getRoomId(), "baksakcci",
             "");
 

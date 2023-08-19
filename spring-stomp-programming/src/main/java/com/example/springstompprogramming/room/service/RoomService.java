@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
 
+    @Transactional(readOnly = true)
     public List<RoomResponseDto> findAll() {
         List<Room> rooms = roomRepository.findAll();
         List<RoomResponseDto> roomResponseDtos = new ArrayList<>();
@@ -22,14 +24,15 @@ public class RoomService {
         return roomResponseDtos;
     }
 
+    @Transactional(readOnly = true)
     public RoomResponseDto findRoom(String roomId) {
-        Room room = roomRepository.findById(roomId);
+        Room room = roomRepository.findByRoomId(roomId).orElseThrow();
         return RoomResponseDto.toDto(room.getRoomId(), room.getName());
     }
 
     public RoomResponseDto createRoom(String name) {
         Room room = Room.create(name);
-        roomRepository.saveRoom(room.getRoomId(), room);
+        roomRepository.save(room);
         return RoomResponseDto.toDto(room.getRoomId(), name);
     }
 }
