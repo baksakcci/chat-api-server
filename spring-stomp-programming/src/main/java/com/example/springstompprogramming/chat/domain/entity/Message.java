@@ -18,7 +18,6 @@ public class Message {
 
     private String content;
 
-    private MessageType type;
     @Column(name = "create_at")
     private LocalDateTime createAt;
 
@@ -27,12 +26,11 @@ public class Message {
         createAt = LocalDateTime.now();
     }
 
-    private Message(String content, MessageType type) {
+    private Message(String content) {
         this.content = content;
-        this.type = type;
     }
 
-    public static Message create(String content, MessageType type) {
-        return new Message(content, type);
+    public static Message create(String content) {
+        return new Message(content);
     }
 }

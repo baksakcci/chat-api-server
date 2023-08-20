@@ -1,7 +1,6 @@
 package com.example.springstompprogramming.chat;
 
 import com.example.springstompprogramming.chat.dto.MessageDto;
-import com.example.springstompprogramming.chat.domain.entity.MessageType;
 import com.example.springstompprogramming.room.domain.entity.Room;
 import com.example.springstompprogramming.room.domain.repository.RoomRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +31,6 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -86,7 +84,7 @@ public class ChatIntegrationTest {
         // init - given
         BlockingQueue<MessageDto> queue = new LinkedBlockingQueue<>();
         Room room = roomRepository.findByName("testRoom1").orElseThrow(NoSuchElementException::new);
-        MessageDto testMessage = MessageDto.toDto(MessageType.ENTER, room.getRoomId(), "baksakcci",
+        MessageDto testMessage = MessageDto.toDto(room.getRoomId(), "baksakcci",
             "");
 
         // subscribe & send - when
@@ -108,7 +106,6 @@ public class ChatIntegrationTest {
         System.out.println("roomId: " + poll.getRoomId());
         System.out.println("sender: " + poll.getSender());
         Assertions.assertThat(poll.getRoomId()).isEqualTo(room.getRoomId());
-        Assertions.assertThat(poll.getMessageType()).isEqualTo(MessageType.ENTER);
     }
 
     private WebSocketStompClient webSocketStompClient() {

@@ -1,6 +1,5 @@
 package com.example.springstompprogramming.chat.dto;
 
-import com.example.springstompprogramming.chat.domain.entity.MessageType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,19 +9,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageDto {
-    private MessageType messageType;
     private String roomId;
     private String sender;
     private String message;
 
-    private MessageDto(MessageType messageType, String roomId, String sender, String message) {
-        this.messageType = messageType;
+    private MessageDto(String roomId, String sender, String message) {
         this.roomId = roomId;
         this.sender = sender;
         this.message = message;
     }
 
-    public static MessageDto toDto(MessageType messageType, String roomId, String sender, String message) {
-        return new MessageDto(messageType, roomId, sender, message);
+    public static MessageDto toDto(String roomId, String sender, String message) {
+        return new MessageDto(roomId, sender, message);
     }
 }

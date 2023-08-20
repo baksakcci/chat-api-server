@@ -6,6 +6,12 @@ spring:
   jpa:
     database: h2
     generate-ddl: on # DDL on, off
+    show-sql: true # System.out 으로 출력. logging.level.org.hibernate.SQL=debug 로 대체.
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create
   h2:
     console:
       enabled: true  # H2 Console을 사용할지 여부 (H2 Console은 H2 Database를 UI로 제공해주는 기능)
